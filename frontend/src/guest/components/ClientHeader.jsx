@@ -17,14 +17,10 @@ const ClientHeader = () => {
     
     const handleLogout = () =>{
         dispatch(handleLogoutRedux());
+        navigate("/");
+            toast("Logout Success!");
     }
 
-    useEffect(() =>{
-        if(user && user.auth === false){
-            navigate("/");
-            toast("Logout Success!");
-        }
-    },[user, navigate]);
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
