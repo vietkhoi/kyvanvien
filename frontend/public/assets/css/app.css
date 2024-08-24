@@ -461,6 +461,9 @@ html {
     width: unset;
   }
 }
+.dark-theme .section-list-category .list-category li{
+  background-color: rgb(155, 155, 167) !important;
+}
 .section-list-category .list-category {
   -moz-column-gap: 8px;
   column-gap: 8px;
@@ -1483,7 +1486,7 @@ textarea {
   border-radius: 4px; /* Bo góc */
   box-sizing: border-box;
   width: 100%;
-  background-color: rgb(74, 74, 78);
+  background-color: rgb(74, 74, 78);/*rgb(74, 74, 78)*/
   margin: 10px 0;
   color: #fff;
 }
