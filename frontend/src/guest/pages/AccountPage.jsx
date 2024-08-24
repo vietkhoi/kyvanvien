@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const Account = () => {
     const dispatch = useDispatch();
+    const account = useSelector((state) => state.user.account);
+    const isError = useSelector((state) => state.user.isError);
 
 
   const [isSignIn, setIsSignIn] = useState(true);
@@ -18,7 +20,6 @@ const Account = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -37,14 +38,22 @@ const Account = () => {
       return;
     }
     try {
-
-      dispatch(handleLoginRedux(email, password));
-      toast.success("Login successful!");
-      navigate("/"); // Redirect to root page
+      await dispatch(handleLoginRedux(email, password));
+      // Chờ Redux state được cập nhật và sau đó điều hướng
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      console.error("Login error:", error);
+      // Xử lý lỗi nếu cần
     }
   };
+  useEffect(() => {
+    if (account.auth) {
+      toast.success("Đăng nhập thành công");
+      navigate("/");
+    } else if (isError) {
+      navigate("/account");
+    }
+  }, [account.auth, isError, navigate]);
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -69,7 +78,6 @@ const Account = () => {
       toast.success("Registration successful!");
 
       dispatch(handleLoginRedux(email, password));
-      navigate("/"); // Redirect to root page
     } catch (error) {
       if (
         error.response &&
@@ -82,11 +90,6 @@ const Account = () => {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("token"); // Remove token
-    navigate("/login");
-  };
 
   const inputStyle = {
     marginTop: "0.25rem",
@@ -124,19 +127,7 @@ const Account = () => {
         userSelect: "none",
       }}
     >
-      {user ? (
-        <div style={{ padding: "1rem", backgroundColor: "#ffffff" }}>
-          <span>Welcome, {user.fullName}</span>
-          <div style={{ float: "right" }}>
-            <a href="/profile" style={{ marginRight: "1rem" }}>
-              Account
-            </a>
-            <a href="#" onClick={handleLogout}>
-              Logout
-            </a>
-          </div>
-        </div>
-      ) : (
+      
         <div
           style={{
             flexGrow: 1,
@@ -449,7 +440,6 @@ const Account = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
     </main>
   );
